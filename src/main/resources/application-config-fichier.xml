@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/util
+http://www.springframework.org/schema/util/spring-util.xsd">
+	<!-- Configuration d'un bean dont l'identifiant est "scanner". Il est créé 
+		à partir de la classe "java.util.Scanner" -->
+	<bean id="scanner" class="java.util.Scanner">
+		<constructor-arg>
+			<!-- Référencement du champ static "System.in" -->
+			<util:constant static-field="java.lang.System.in"></util:constant>
+		</constructor-arg>
+	</bean>
+
+	<bean id="daoFichier" class="dev.dao.PlatDaoFichier">
+		<constructor-arg name="fichierStockage"
+			value="stock_plats"></constructor-arg>
+	</bean>
+
+	<bean id="platService1" class="dev.service.PlatServiceVersion1">
+		<constructor-arg name="dao" ref="daoFichier"></constructor-arg>
+	</bean>
+
+	<bean id="menu" class="dev.ihm.Menu">
+		<constructor-arg name="scanner" ref="scanner"></constructor-arg>
+		<constructor-arg name="service" ref="platService1"></constructor-arg>
+		<property name="Actions" ref="actions"></property>
+	</bean>
+
+
+	<bean id="optionAjouter" class="dev.ihm.options.OptionAjouterPlat">
+		<constructor-arg name="scanner" ref="scanner"></constructor-arg>
+		<constructor-arg name="service" ref="platService1"></constructor-arg>
+	</bean>
+
+	<bean id="optionLister" class="dev.ihm.options.OptionListerPlats">
+		<constructor-arg name="service" ref="platService1"></constructor-arg>
+	</bean>
+
+	<bean id="optionTerminer" class="dev.ihm.options.OptionTerminer">
+	</bean>
+
+	<util:map id="actions" map-class="java.util.HashMap"
+		key-type="java.lang.Integer" value-type="dev.ihm.options.IOptionMenu">
+		<entry key="1" value-ref="optionAjouter" />
+		<entry key="2" value-ref="optionLister" />
+		<entry key="99" value-ref="optionTerminer" />
+	</util:map>
+
+
+</beans>
